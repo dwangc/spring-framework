@@ -66,6 +66,12 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
+ *
+ * 此类是一个后置处理器的类，主要功能是参与BeanFactory的创建，主要功能：
+ * 1、解析加了@configuration的配置类
+ * 2、解析@ComponentScan扫描的包
+ * 3、解析@ComponentScans扫描的包
+ * 4、解析@Import注解
  * {@link BeanFactoryPostProcessor} used for bootstrapping processing of
  * {@link Configuration @Configuration} classes.
  *
@@ -233,7 +239,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 					"postProcessBeanFactory already called on this post-processor against " + registry);
 		}
 		this.registriesPostProcessed.add(registryId);
-
+		//处理配置类的bean定义信息
 		processConfigBeanDefinitions(registry);
 	}
 
@@ -260,11 +266,15 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	}
 
 	/**
+	 * 构建和验证一个是否被@Configuration修饰，并做相关的解析工作
+	 * 如果你对此方法了解清楚了，那么springboot的自动装配原理就清楚了
 	 * Build and validate a configuration model based on the registry of
 	 * {@link Configuration} classes.
 	 */
 	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
+		//创建存放BeanDefinitionHolder的对象集合
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
+		//当前registry是DefuatListableBeanFactory,获取所有已注册的BeanDefinition的beanName
 		String[] candidateNames = registry.getBeanDefinitionNames();
 
 		for (String beanName : candidateNames) {

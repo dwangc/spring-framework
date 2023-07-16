@@ -517,8 +517,11 @@ class ConfigurationClassParser {
 	 * Returns {@code @Import} class, considering all meta-annotations.
 	 */
 	private Set<SourceClass> getImports(SourceClass sourceClass) throws IOException {
+		//创建集合，存储包含@import注解的类
 		Set<SourceClass> imports = new LinkedHashSet<>();
+		//创建集合，为了实现递归调用
 		Set<SourceClass> visited = new LinkedHashSet<>();
+		//收集@import注解的类
 		collectImports(sourceClass, imports, visited);
 		return imports;
 	}
